@@ -1,0 +1,11 @@
+name: "trace_wt"
+source: "trace40.dat"
+v0: -80.0
+normalize: false
+
+step {
+  dt: 4.0
+  vm: 40.0
+  stype: TRACE
+  stepsize: 0.1
+}

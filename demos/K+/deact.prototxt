@@ -1,0 +1,17 @@
+name: "deact_wt"
+source: "deact.dat"
+v0: -80.0
+normalize: true
+weight: 0.6
+
+step {
+  dt: 2.0
+  vm: 60.0
+  stype: NONE
+}
+
+step {
+  dt: 4.0
+  stype: MIN
+  stepsize: 0.2
+}

@@ -1,0 +1,10 @@
+name: "gv_wt"
+source: "gv.dat"
+v0: -80.0
+normalize: true
+
+step {
+  dt: 4.0
+  stype: PEAK
+  stepsize: 0.5
+}

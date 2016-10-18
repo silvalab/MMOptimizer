@@ -1,0 +1,16 @@
+name:     "inac"
+source:   "inac.dat"
+v0:       -120.0
+normalize: true
+
+step {
+  dt: 200.0
+  stype: NONE
+}
+
+step {
+  dt: 2.5
+  vm: -20
+  stype: PEAK
+  stepsize: 0.05
+}

@@ -1,0 +1,13 @@
+name: "rise_wt"
+source: "rise.dat"
+v0: -120.0
+normalize: false
+weight: 2.0
+
+step {
+  dt: 1.6
+  stype: TAU
+  stepsize: 0.02
+  extra_args: 0.1
+  extra_args: 0.9
+}

@@ -1,0 +1,45 @@
+solver_mode: SIMULATED_ANNEALING
+simulation_mode: EXPM
+
+node_penality: 0.00025
+edge_penality: 0.0001
+eig_penality: 0.0001
+
+model_param {
+
+  n_prms: 3
+
+  min_states: 3
+  max_states: 10
+  mu: 0
+  std: 2
+
+  mutation {
+    add_edge: 0.18
+    add_node: 0.05
+    rm_edge: 0.05
+    rm_node: 0.05
+
+    update_std: 0.2
+    update_prob: 0.2
+
+    g_prob: 0.05
+    f_prob: 0.05
+  }
+
+}
+
+sa_param {
+
+  k_max: 200000
+  n_chains: 25
+  step: 500
+  gamma: 0.99
+  t0: 0.0020
+  display: 5000
+  restart: 0.0001
+
+  snapshot: 1000
+  snapshotdir: "snapshots/t2"
+
+}

@@ -1,0 +1,11 @@
+name: "trace_-10mV"
+source: "trace_-10mV.dat"
+v0: -120.0
+normalize: false
+
+step {
+  vm: -10
+  dt: 2.3
+  stype: TRACE
+  stepsize: 0.1
+}

@@ -1,0 +1,144 @@
+syntax = "proto2";
+
+package MarkovChannel;
+
+message ProtocolParameter {
+
+  required string name = 1;
+  optional string source = 2;
+
+  optional double v0 = 3 [default = -120];
+  optional double temperature = 4 [default = 293.0];
+  optional bool normalize = 5 [default = false];
+  optional double weight = 6 [default = 1];
+
+  repeated ProtocolStep step = 7;
+
+  enum DataType {
+    CONDUCTANCE = 0;
+    FLUORIMETRY = 1;
+  }
+
+  optional DataType dtype = 8 [default = CONDUCTANCE];
+
+
+}
+
+message ProtocolStep {
+
+  enum StepType {
+    NONE = 0;
+    PEAK = 1;
+    TAU = 2;
+    TRACE = 3;
+    MIN = 4;
+  }
+
+
+  optional double dt = 1;
+  optional double vm = 2;
+
+  optional StepType stype = 3 [default = NONE];
+
+  optional double stepsize = 8 [default = 0.1];
+  repeated double extra_args = 9;
+
+}
+
+message SolverParameter {
+
+  enum SolverMode {
+    GENETIC_ALGORITHM = 0;
+    SIMULATED_ANNEALING = 1;
+  }
+
+  enum SimulationMode {
+    ODE = 0;
+    EXPM = 1;
+  }
+
+  optional SolverMode solver_mode = 1 [default = GENETIC_ALGORITHM];
+  optional SimulationMode simulation_mode = 2 [default = ODE];
+
+  required ModelParameter model_param = 3;
+  optional double node_penality = 5 [default = 1.0];
+  optional double edge_penality = 6 [default = 1.0];
+  optional double eig_penality = 7 [default = 0.0];
+
+  optional GAParameter ga_param = 8;
+  optional SAParameter sa_param = 9;
+
+}
+
+message ModelParameter {
+
+  enum VoltageDependance {
+    LINEAR = 0;
+    POLY = 1;
+    SIGMOID = 2;
+  }
+
+  optional int32 min_states = 1 [default=3];
+  optional int32 max_states = 2 [default=10];
+
+  optional int32 n_prms = 3 [default=2];
+  optional VoltageDependance vfunc = 4 [default=SIGMOID];
+
+  optional double mu = 5 [default = 0.0];
+  optional double std = 6 [default = 1.0];
+
+  required MutationParameter mutation = 7;
+}
+
+message MutationParameter {
+  optional double add_edge = 1;
+  optional double add_node = 2;
+  optional double rm_edge = 3;
+  optional double rm_node = 4;
+
+  optional double update_std = 5 [default = 0.1];
+  optional double update_prob = 6 [default = 0.2];
+
+  optional double g_prob = 7 [default = 0.05];
+  optional double f_prob = 8 [default = 0.05];
+}
+
+message GAParameter {
+  enum SelectionMode {
+    TOURNAMENT = 0;
+    PROPORTIONATE = 1;
+    STOCHASTIC = 2;
+    UNIFORM = 3;
+    ROULETTE = 4;
+    RANK = 5;
+  }
+  optional int32 n_subpopulations = 1 [default = 8];
+  optional int32 population_size = 2 [default = 100];
+  optional double migration_rate = 3 [default = 0.01];
+  optional double reproduction_rate = 4 [default = .5];
+  optional SelectionMode selection_mode = 5 [default=TOURNAMENT];
+  optional TransitionParameter mutation_param = 6;
+}
+
+message SAParameter {
+
+  optional int32 k_max = 1 [default = 100];
+  optional int32 step = 2 [default = 1000];
+  optional double gamma = 3 [default = 0.9];
+  optional double t0 = 4 [default = 0.01];
+  optional int32 display = 5 [default = 100];
+  optional int32 n_chains = 6 [default = 100];
+  optional double restart = 7 [default = 0.001];
+
+  optional int32 snapshot = 8 [default = 1000];
+  optional string snapshotdir = 9 [default = 'snapshots'];
+
+}
+
+message TransitionParameter {
+  optional double add_state = 1;
+  optional double add_edge = 2;
+  optional double remove_edge = 3;
+  optional double shift_params = 4;
+  optional bool fixed_model = 5 [default = false];
+}

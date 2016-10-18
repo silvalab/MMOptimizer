@@ -1,0 +1,22 @@
+name:     "recovery"
+source:   "recovery.dat"
+v0:       -120.0
+normalize: true
+
+step {
+  dt: 20.0
+  vm: -20
+  stype: NONE
+}
+
+step {
+  vm: -120
+  stype: NONE
+}
+
+step {
+  vm: -20
+  dt: 2.5
+  stype: PEAK
+  stepsize: 0.05
+}
