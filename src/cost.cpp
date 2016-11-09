@@ -4,8 +4,10 @@
 // }
 #include <math.h>
 
+/*
 #include <gsl/gsl_errno.h>
 #include <gsl/gsl_odeiv2.h>
+*/
 
 #include <sstream>
 
@@ -69,7 +71,7 @@ inline double tau(int n, double* x, double v1, double v2)
   return res;
 }
 
-
+/*
 
 int func(double t, const double *y, double *f, void *params)
 {
@@ -93,9 +95,13 @@ int jac(double t, const double *y, double *dfdy, double *dfdt, void *params)
   return GSL_SUCCESS;
 }
 
+*/
+
 int step_ode(Model::Model& m, vector<Step>& steps,
   double *y, vector<double>& out)
 {
+  return -1;
+/*
   int N = m.n_states();
   double* Q = &y[N];
   void* params[2] = {(void*) &N, (void*) &Q};
@@ -164,12 +170,14 @@ int step_ode(Model::Model& m, vector<Step>& steps,
   }
   gsl_odeiv2_driver_free (d);
   return 1;
+*/
 }
 
 
 int step_exp(Model::Model& m, vector<Step>& steps,
   double *y, vector<double>& out)
 {
+
   int N = m.n_states();
   double *H = &y[N], t;
 
@@ -253,6 +261,7 @@ int step_exp(Model::Model& m, vector<Step>& steps,
   }
   free(wsp);
   free(ipiv);
+
 }
 
 

@@ -6,8 +6,8 @@ FORT = gfortran
 
 MKLROOT = /opt/intel/mkl
 
-EXTRA_INCLUDE_DIRS = -I/usr/local/include
-EXTRA_LINK_LIBS = -L/usr/local/lib -L/opt/intel/lib/intel64
+EXTRA_INCLUDE_DIRS = 
+EXTRA_LINK_LIBS = -L/opt/intel/lib/intel64
 
 INCLUDE_DIRS = -I include -I proto -I$(MKLROOT)/include $(EXTRA_INCLUDE_DIRS)
 
@@ -15,7 +15,7 @@ CFLAGS = $(INCLUDE_DIRS) -m64 -D USE_MKL
 
 LFLAGS1 = -L$(MKLROOT)/lib/intel64 $(EXTRA_LINK_LIBS)
 
-LIBS = -lgfortran -lmkl_intel_lp64 -lmkl_core -lmkl_intel_thread -lpthread -lm -ldl -lprotobuf -liomp5 -lgsl -lgslcblas -lblas -llapack -lstdc++ -fopenmp
+LIBS = -lgfortran -lmkl_intel_lp64 -lmkl_core -lmkl_intel_thread -lpthread -lm -ldl -lprotobuf -liomp5 -lblas -llapack -lstdc++ -fopenmp
 
 LFLAGS2 = $(LFLAGS1) $(LIBS)
 
