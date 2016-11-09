@@ -1,64 +1,72 @@
 # SRC := src/*.cpp
 
-MKLROOT = /opt/intel/mkl
-
-INCLUDE_DIRS = -I include -I proto -I$(MKLROOT)/include -I/usr/local/include
-
+PROTOC = protoc
 CC = gcc
-
 FORT = gfortran
 
-PROTOC = protoc
+MKLROOT = /opt/intel/mkl
+
+EXTRA_INCLUDE_DIRS = -I/usr/local/include
+EXTRA_LINK_LIBS = -L/usr/local/lib -L/opt/intel/lib/intel64
+
+INCLUDE_DIRS = -I include -I proto -I$(MKLROOT)/include $(EXTRA_INCLUDE_DIRS)
 
 CFLAGS = $(INCLUDE_DIRS) -m64 -D USE_MKL
 
-LFLAGS = -L$(MKLROOT)/lib/intel64 -L/opt/intel/lib/intel64 -L/usr/local/lib/
+LFLAGS1 = -L$(MKLROOT)/lib/intel64 $(EXTRA_LINK_LIBS)
 
-LIBS = -lmkl_intel_lp64 -lmkl_core -lmkl_intel_thread -lpthread -lm -ldl -lprotobuf -liomp5 -lgsl -lgslcblas -lblas -llapack -lgfortran -lstdc++ -fopenmp
+LIBS = -lgfortran -lmkl_intel_lp64 -lmkl_core -lmkl_intel_thread -lpthread -lm -ldl -lprotobuf -liomp5 -lgsl -lgslcblas -lblas -llapack -lstdc++ -fopenmp
 
-SRCS = proto/MarkovChannel.pb.cc src/ChannelProtocol.cpp src/math_functions.cpp src/graph_functions.cpp src/Model.cpp src/cost.cpp src/SimulatedAnnealing.cpp src/main.cpp
-
-OBJS = $(SRCS:.c=.o)
-
-FOBJS = src/private/dgpadm.f.o
-
-MAIN = MarkovChannel
-
-#
-# The following part of the makefile is generic; it can be used to
-# build any executable just by changing the definitions above and by
-# deleting dependencies appended to the file from 'make depend'
-#
-
-.PHONY: depend clean
-
-all:    $(MAIN)
-
-$(MAIN): $(OBJS)
-	$(CC) $(CFLAGS) $(INCLUDES) -o $(MAIN) $(OBJS) $(FOBJS) $(LFLAGS) $(LIBS)
+LFLAGS2 = $(LFLAGS1) $(LIBS)
 
 
-# this is a suffix replacement rule for building .o's from .c's
-# it uses automatic variables $<: the name of the prerequisite of
-# the rule(a .c file) and $@: the name of the target of the rule (a .o file)
-# (see the gnu make manual section about automatic variables)
+MAIN = MMOptimizer
 
-proto/MarkovChannel.pb.cc:
+SRCS = \
+	src/ChannelProtocol.cpp \
+	src/math_functions.cpp \
+	src/graph_functions.cpp \
+	src/Model.cpp \
+	src/cost.cpp \
+	src/SimulatedAnnealing.cpp \
+	src/main.cpp \
+	src/private/dgpadm.f \
+
+OBJS = \
+        src/ChannelProtocol.o \
+        src/math_functions.o \
+        src/graph_functions.o \
+        src/Model.o \
+        src/cost.o \
+        src/SimulatedAnnealing.o \
+        src/main.o \
+        src/private/dgpadm.o \
+
+
+OBJECTS = $($(SRCS:.f=.o) $(SRCS:.cpp=.o) *.o)
+PROTOS = proto/MarkovChannel.pb.h
+
+all: $(MAIN)
+
+$(MAIN): $(PROTOS) $(OBJS)
+	@echo $(OBJECTS)
+	$(CC) -o $@ $(CLAGS) $(OBJS) proto/MarkovChannel.pb.cc  $(LFLAGS2)
+
+.cpp.o: proto/MarkovChannel.pb.h
+	$(CC) $(CFLAGS) -c $< -o $@
+
+.f.o:
+	$(FORT) $(INCLUDE_DIRS) -c $< -o $@
+
+proto/MarkovChannel.pb.h: proto/MarkovChannel.proto
 	$(PROTOC) -I=proto --cpp_out=proto proto/MarkovChannel.proto
-
-*.c.o:
-	$(CC) $(CFLAGS) $(INCLUDES) -c $<  -o $@
-
-src/private/dgpadm.f.o:
-	$(FORT) -c src/private/dgpadm.f $< -o src/private/dgpadm.f.o
 
 
 clean:
-	$(RM) *.o *~ $(MAIN)
+	$(RM) src/*.o
 	$(RM) proto/*.pb.h
 	$(RM) proto/*.pb.cc
+	$(RM) src/fortran/*.o
 
-depend: $(SRCS)
-	makedepend $(INCLUDES) $^
 
 # DO NOT DELETE THIS LINE -- make depend needs it
