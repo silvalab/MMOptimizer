@@ -1,13 +1,13 @@
-# MarkovChannel
+# MMOptimizer
 Ion channel Markov model parameter optimization
 
 ### Introduction
 
-MarkovChannel is a tool for optimizing Markov models of ion channels, using the matrix exponential to greatly reduce fitting times.  It provides a flexable framework for encoding a range of experimentally collected protject into the model fitting.
+MMOptimizer is a tool for optimizing Markov models of ion channels, using the matrix exponential to greatly reduce fitting times.  It provides a flexable framework for encoding a range of experimentally collected protject into the model fitting.
 
 ### License
 
-MarkovChannel is released under the MIT Licensse (refer to the LICENSE file for details).
+MMOptimizer is released under the MIT Licensse (refer to the LICENSE file for details).
 
 ### Contents
 0. [Requirements: software](#requirements-software)
@@ -32,16 +32,16 @@ MarkovChannel is released under the MIT Licensse (refer to the LICENSE file for 
 
 ### Running the Demos
 
-MarkovChannel comes with two demos; one for a Na<sup>+</sup> channel and one for a K<sup>+</sup> channel.
+MMOptimizer comes with two demos; one for a Na<sup>+</sup> channel and one for a K<sup>+</sup> channel.
 
 Before executing either of the examples, you must first set the mkl enviornment variables
-* run `source /opt/intel/mkl/bin/mkvars.sh intel64`
+* run `source /opt/intel/mkl/bin/mklvars.sh intel64`
 
 To execute the Na<sup>+</sup> optimization
-* run `./MarkovChannel solver.prototxt demos/Na+/protocols.lst`
+* run `./MMOptimizer solver.prototxt demos/Na+/protocols.lst`
 
 To exectute the K<sup>+</sup> optimization
-* run `./MarkovChannel solver.prototxt demos/K+/protocols.lst`
+* run `./MMOptimizer solver.prototxt demos/K+/protocols.lst`
 
 When running these commands, optimization progress will be periodically displayed.  More detailed information and fitted models will be written to the snapshot directory.
 
@@ -49,7 +49,7 @@ When running these commands, optimization progress will be periodically displaye
 
 Results of the demos are written to the snapshot directory in the "K+\_Demo" and "Na+\_Demo" respectivly.  In each of these subdirectories, you will find iter\_(%d).txt and iter\_(%d).model.  The .txt files contain the model fits at that iteration for each of the protocols.  The .model file provides the model structure and rate parameters that determine the behavior of the model.
 
-Included in MarkovChannel are some MATLAB scripts that can interpret the .model files.
+Included in MMOptimizer are some MATLAB scripts that can interpret the .model files.
 
 
 ### Training on Other Data
@@ -210,6 +210,4 @@ The default value of the solver.prototxt works for a wide range of protocol sett
 * gamma - annealing schedule
 * snapshotdir - the directory to write the optimized models (make sure this directory actually exists)
 
-Finally, you can begin fitting the model by running `./MarkovChannel solver.prototoxt protocols.lst`
-
-
+Finally, you can begin fitting the model by running `./MMOptimizer solver.prototoxt protocols.lst`

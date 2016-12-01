@@ -50,7 +50,7 @@ all: $(MAIN)
 
 $(MAIN): $(PROTOS) $(OBJS)
 	@echo $(OBJECTS)
-	$(CC) -o $@ $(CLAGS) $(OBJS) proto/MarkovChannel.pb.cc  $(LFLAGS2)
+	$(CC) -o $@ $(CFLAGS) $(OBJS) proto/MarkovChannel.pb.cc  $(LFLAGS2)
 
 .cpp.o: proto/MarkovChannel.pb.h
 	$(CC) $(CFLAGS) -c $< -o $@
@@ -66,7 +66,7 @@ clean:
 	$(RM) src/*.o
 	$(RM) proto/*.pb.h
 	$(RM) proto/*.pb.cc
-	$(RM) src/fortran/*.o
+	$(RM) src/private/*.o
 
 
 # DO NOT DELETE THIS LINE -- make depend needs it
