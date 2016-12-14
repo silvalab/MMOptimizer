@@ -41,6 +41,6 @@ sa_param {
   restart: 0.0001
 
   snapshot: 1000
-  snapshotdir: "snapshots1"
+  snapshotdir: "snapshots"
 
 }
