@@ -204,7 +204,7 @@ sa_param {
 ```
 
 The default value of the solver.prototxt works for a wide range of protocol settings.  However, some important paramters include:
-* vfunc - the type of voltage dependant rate function to use
+* vfunc - the type of voltage dependant rate function to use, options are SIGMOID, LINEAR, and POLY
 * n_prms - the number of voltage function terms
 * node_penality - penalize the model for each node
 * edge_penality - penalize the model for each edge
