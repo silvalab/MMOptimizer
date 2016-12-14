@@ -33,6 +33,7 @@ namespace Model {
     double *rs, *rk;
     double *C, *F;
     double *r_vec;
+    double *args;
 
     int n_states() {return G.N;};
     int n_edges() {return G.E;};

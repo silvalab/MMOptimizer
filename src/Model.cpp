@@ -5,16 +5,27 @@
 #define max(a, b) (((a) > (b)) ? (a) : (b))
 
 
+using namespace MarkovChannel;
+
+static double vscale = 50.0;
 
 namespace Model {
 
   int Model::Model::count = 0;
   MarkovChannel::ModelParameter prms;
 
+
   Model::Model(int N, double p)
   {
     random_connected_graph(N, this->G, p);
     int P = prms.n_prms();
+
+    args = NULL;
+    if (prms.vfunc() == ModelParameter::SIGMOID) {
+      int nargs = 2*(P-1);
+      args = (double*) malloc(nargs*sizeof(double));
+      Math::rng_gaussian(nargs, args, 0, prms.std());
+    }
 
     this->rs = (double*) malloc(P*(G.N+G.E)*sizeof(double));
     this->rk = this->rs + P*G.N;
@@ -24,13 +35,6 @@ namespace Model {
     this->F = (double*) calloc(G.N, sizeof(double));
     C[0] = 1.0; F[0] = 1.0; r_vec = NULL;
 
-    id = Model::count++;
-  }
-
-
-  Model::Model()
-  {
-    r_vec = NULL; rs=NULL; C = NULL; F = NULL;
     id = Model::count++;
   }
 
@@ -52,8 +56,22 @@ namespace Model {
     memcpy(this->C, m->C, N*sizeof(double));
     memcpy(this->F, m->F, N*sizeof(double));
 
-    id = Model::count++; r_vec = NULL;
+    if (m->args != NULL) {
+      this->args = (double*) malloc(2*(P-1)*sizeof(double));
+      memcpy(this->args, m->args, 2*(P-1)*sizeof(double));
+    }
 
+    id = Model::count++; r_vec = NULL;
+  }
+
+  Model::Model()
+  {
+    r_vec = NULL;
+    rs=NULL;
+    C = NULL;
+    F = NULL;
+    args = NULL;
+    id = Model::count++;
   }
 
   Model::~Model()
@@ -69,6 +87,9 @@ namespace Model {
 
     if (rs)
       free(rs);
+
+    if (args)
+      free(args);
 
   }
 
@@ -172,45 +193,76 @@ namespace Model {
       n->rs[i] += r[i];
     }
 
-/*
-    double *gflip = (double*) malloc(N*sizeof(double));
-    double *fflip = (double*) malloc(N*sizeof(double));
-
-    Math::rng_uniform(N, gflip);
-    Math::rng_uniform(N, fflip);
-
-    for (int i = 0; i < N; i++) {
-      if ( gflip[i] < mut.g_prob() ) {
-        n->C[i] = 1.0 - n->C[i];
+    n->args = NULL;
+    if (m->args) {
+      n->args = (double*) malloc(2*(P-1)*sizeof(double));
+      double *ra = (double*) malloc(2*(P-1)*sizeof(double));
+      Math::rng_gaussian(2*(P-1), ra, 0, sig);
+      for (int i = 0; i < 2*(P-1); i++) {
+        n->args[i] = m->args[i] + ra[i];
       }
-      if ( fflip[i] < mut.f_prob() ) {
-        n->F[i] = 1.0 - n->F[i];
-      }
+      free(ra);
     }
-*/
+
     n->id = Model::Model::count++;
 
     free(mult);
     free(r);
-//    free(gflip);
-//    free(fflip);
-    return n;
 
+    return n;
+  }
+
+
+  void vfunc(Model &m, double vm, double *var)
+  {
+    int i, N=m.G.N, P=prms.n_prms();
+    if (prms.vfunc() == ModelParameter::SIGMOID) {
+      var[0] = 1.0;
+      for (i = 1; i < P; i++) {
+        double b = vscale*m.args[2*(i-1)+1];
+        double a = vscale*m.args[2*(i-1)];
+        // if (abs(b) < 5) {
+        //   m.args[2*(i-1)+1] = b > 0 ? 5 : -5;
+        // }
+        var[i] = tanh((vm+a)/b);
+      }
+    }
+    else if(prms.vfunc() == ModelParameter::LINEAR) {
+      var[0] = 1.0; var[1] = vm / vscale;
+      for (i = 2; i < P; i++) {
+        var[i] = 0;
+      }
+    }
+    else if(prms.vfunc() == ModelParameter::POLY) {
+      double scale = 1.0, vk = 1.0;
+      for (i = 0; i < P; i++) {
+        var[i] = vk*scale;
+        scale /= vscale;
+        vk *= vm;
+      }
+    }
+    // printf("\n");
+    // printf("%f %f\n", m.args[0], m.args[1]);
+    // printf("%f %f\n", var[0], var[1]);
   }
 
 
   double* initial_state(Model& m, double vm, double* s)
   {
 
-    double var[] = {1, vm/100, tanh((vm+20)/50.0)};
     int i, N=m.G.N, P=prms.n_prms();
+    double *var = (double*) malloc(P*sizeof(double));
+    vfunc(m, vm, var);
 
     cblas_dgemv(CblasRowMajor, CblasNoTrans, N, P,
         1.0, m.rs, P, var, 1, 0.0, s, 1);
 
     for (i=0; i<N; i++) s[i] = exp(s[i]);
     double scale = 1.0/cblas_dasum(N, s, 1);
-    cblas_dscal(N, scale, s, 1); return s;
+    cblas_dscal(N, scale, s, 1);
+
+    free(var);
+    return s;
   }
 
 
@@ -241,8 +293,9 @@ namespace Model {
   double* transition_matrix(Model& m, double vm, double* Q)
   {
 
-    double var[] = {1, vm/100, tanh((vm+20)/50.0)};
     int i, N=m.G.N, E=m.G.E, P=prms.n_prms();
+    double *var = (double*) malloc(P*sizeof(double));
+    vfunc(m, vm, var);
 
     double *r_vec = rate_vector(m);
     double *e_vec = (double*) malloc(2*E*sizeof(double));
@@ -258,7 +311,7 @@ namespace Model {
       Q[N*e1+e1] -= e_vec[2*i]; Q[N*e2+e2] -= e_vec[2*i+1];
       Q[N*e2+e1] += e_vec[2*i]; Q[N*e1+e2] += e_vec[2*i+1];
     }
-    free(e_vec); return Q;
+    free(var); free(e_vec); return Q;
   }
 
 
@@ -287,8 +340,6 @@ namespace Model {
     }
     free(ic);
 
-
-
     os << "\n~RS~" << std::endl;
     for (int i=0; i<N; i++) {
       for (int j=0; j<P; j++) {
@@ -307,11 +358,20 @@ namespace Model {
       os << "\n";
     }
 
+    if (m.args) {
+      os << "\n~args~" << std::endl;
+      for (int i=0; i<P; i++) {
+        n = sprintf(buffer, "%8.4f\t%8.4f\n",
+          vscale*m.args[2*i], vscale*m.args[2*i+1]);
+        os << std::string(buffer, n);
+      }
+      os << "\n";
+    }
+
     os << "\n~G~" << std::endl;
     for (int i=0; i<N; i++) {
       os << m.C[i] << "\t";
     }
     return os << std::endl;
   }
-
 }

@@ -1,13 +1,14 @@
 solver_mode: SIMULATED_ANNEALING
 simulation_mode: EXPM
 
-node_penality: 0.00025
+node_penality: 0.0003
 edge_penality: 0.0001
-eig_penality: 0.0001
+eig_penality: 0.00001
 
 model_param {
 
-  n_prms: 3
+  vfunc: SIGMOID
+  n_prms: 2
 
   min_states: 3
   max_states: 10
@@ -15,7 +16,7 @@ model_param {
   std: 2
 
   mutation {
-    add_edge: 0.18
+    add_edge: 0.10
     add_node: 0.05
     rm_edge: 0.05
     rm_node: 0.05
@@ -40,6 +41,6 @@ sa_param {
   restart: 0.0001
 
   snapshot: 1000
-  snapshotdir: "snapshots/t2"
+  snapshotdir: "snapshots1"
 
 }

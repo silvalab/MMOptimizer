@@ -103,7 +103,7 @@ namespace SimulatedAnnealing
 
       if ( i % params.display() == 0 ) {
         double time_elap = (double)(clock() - start)/CLOCKS_PER_SEC;
-        nc = sprintf(buffer, "%8i\t%8.8f\t%8.2f", i, cost(fmin_model, NULL), time_elap);
+        nc = sprintf(buffer, "%8i\t%8.8f\t", i, cost(fmin_model, NULL));
         std::cout << std::string(buffer, nc) << std::endl;
       }
 

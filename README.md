@@ -166,6 +166,7 @@ eig_penality: 0.0001
 
 model_param {
 
+  vfunc: SIGMOID
   n_prms: 3
 
   min_states: 3
@@ -203,6 +204,8 @@ sa_param {
 ```
 
 The default value of the solver.prototxt works for a wide range of protocol settings.  However, some important paramters include:
+* vfunc - the type of voltage dependant rate function to use
+* n_prms - the number of voltage function terms
 * node_penality - penalize the model for each node
 * edge_penality - penalize the model for each edge
 * eig_peanlity - penalize model stiffness

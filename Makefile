@@ -11,7 +11,7 @@ EXTRA_LINK_LIBS = -L/usr/local/lib -L/opt/intel/lib/intel64
 
 INCLUDE_DIRS = -I include -I proto -I$(MKLROOT)/include $(EXTRA_INCLUDE_DIRS)
 
-CFLAGS = $(INCLUDE_DIRS) -m64 -D USE_MKL
+CFLAGS = $(INCLUDE_DIRS) -m64 -D USE_MKL -fopenmp
 
 LFLAGS1 = -L$(MKLROOT)/lib/intel64 $(EXTRA_LINK_LIBS)
 
