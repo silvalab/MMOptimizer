@@ -360,7 +360,7 @@ namespace Model {
 
     if (m.args) {
       os << "\n~args~" << std::endl;
-      for (int i=0; i<P; i++) {
+      for (int i=0; i<P-1; i++) {
         n = sprintf(buffer, "%8.4f\t%8.4f\n",
           vscale*m.args[2*i], vscale*m.args[2*i+1]);
         os << std::string(buffer, n);
