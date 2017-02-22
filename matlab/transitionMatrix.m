@@ -4,11 +4,13 @@ ic = model.ic;
 rs = model.rs;
 rk = model.rk;
 
-if ( size(rs, 2) == 3 )
-  args = [1; vm/100; tanh((vm+20)/50.0)];
-else
-  args = [1; vm /100];
+args = zeros(size(model.args, 1)+1, 1);
+args(1) = 1.0;
+
+for i = 1:size(model.args, 1)
+    args(i+1) = tanh((vm + model.args(i, 1))/model.args(i, 2));
 end
+
 
 N = size(rs, 1);
 E = size(rk, 1);

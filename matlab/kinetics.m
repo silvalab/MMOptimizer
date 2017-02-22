@@ -4,7 +4,7 @@ v0 = -120;
 vs = 0;
 
 dt = 0.02;
-t1 = 5.0;
+t1 = 2.5;
 
 y0 = initialState(model, v0);
 y = zeros(length(0:dt:t1), length(y0));

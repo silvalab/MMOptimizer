@@ -318,7 +318,7 @@ namespace Model {
   std::ostream& operator<<(std::ostream& os, const Model& m)
   {
     int N=m.G.N, E=m.G.E, P=prms.n_prms(), n;
-    os << "Model Id:\t" << m.id << "\n" << m.G;
+    // os << "Model Id:\t" << m.id << "\n" << m.G;
 
     Graph::Graph G = m.G;
     char buffer[12];
@@ -331,47 +331,60 @@ namespace Model {
       ic[2*G.E*e.V1 + 2*i+1] = 1;
       ic[2*G.E*e.V2 + 2*i+1] = -1;
     }
+    os << "ic = [\n";
     for (int i=0; i<G.N; i++) {
+      os << "[";
       for (int j=0; j<2*G.E; j++) {
         n = sprintf(buffer, "%4.2f\t", ic[i*2*G.E+j]);
         os << std::string(buffer, n);
       }
-      os << "\n";
+      os << "]\n";
     }
+    os << "]\n";
     free(ic);
 
-    os << "\n~RS~" << std::endl;
+    // os << "\n~RS~" << std::endl;
+    os << "rs = [\n";
     for (int i=0; i<N; i++) {
+      os << "[";
       for (int j=0; j<P; j++) {
         n = sprintf(buffer, "%8.4f\t", m.rs[i*P+j]);
         os << std::string(buffer, n);
       }
-      os << "\n";
+      os << "]\n";
     }
+    os << "]\n";
 
-    os << "\n~RK~" << std::endl;
+    // os << "\n~RK~" << std::endl;
+    os << "rk = [\n";
     for (int i=0; i<E; i++) {
+      os << "[";
       for (int j=0; j<P; j++) {
         sprintf(buffer, "%8.4f\t", m.rk[i*P+j]);
         os << std::string(buffer, n);
       }
-      os << "\n";
+      os << "]\n";
     }
+    os << "]\n";
 
     if (m.args) {
-      os << "\n~args~" << std::endl;
+      // os << "\n~args~" << P << std::endl;
+      os << "args = [\n";
       for (int i=0; i<P-1; i++) {
-        n = sprintf(buffer, "%8.4f\t%8.4f\n",
+        os << "[";
+        n = sprintf(buffer, "%8.4f\t%8.4f]\n",
           vscale*m.args[2*i], vscale*m.args[2*i+1]);
         os << std::string(buffer, n);
       }
-      os << "\n";
+      os << "]\n";
     }
 
-    os << "\n~G~" << std::endl;
+    // os << "\n~G~" << std::endl;
+    os << "G = [";
     for (int i=0; i<N; i++) {
       os << m.C[i] << "\t";
     }
+    os << "]";
     return os << std::endl;
   }
 }
