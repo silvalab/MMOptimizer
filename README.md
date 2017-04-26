@@ -3,11 +3,11 @@ Ion channel Markov model parameter optimization
 
 ### Introduction
 
-MMOptimizer is a tool for optimizing Markov models of ion channels, using the matrix exponential to greatly reduce fitting times.  It provides a flexable framework for encoding a range of experimentally collected protject into the model fitting.
+MMOptimizer is a tool for optimizing Markov models of ion channels, using the matrix exponential to greatly reduce fitting times.  It provides a flexible framework for encoding a range of experimentally collected recordings into the model fitting.
 
 ### License
 
-MMOptimizer is released under the MIT Licensse (refer to the LICENSE file for details).
+MMOptimizer is released under the MIT License (refer to the LICENSE file for details).
 
 ### Contents
 0. [Requirements: software](#requirements-software)
@@ -34,7 +34,7 @@ MMOptimizer is released under the MIT Licensse (refer to the LICENSE file for de
 
 MMOptimizer comes with two demos; one for a Na<sup>+</sup> channel and one for a K<sup>+</sup> channel.
 
-Before executing either of the examples, you must first set the mkl enviornment variables
+Before executing either of the examples, you must first set the mkl environment variables
 * run `source /opt/intel/mkl/bin/mklvars.sh intel64`
 
 To execute the Na<sup>+</sup> optimization
@@ -50,6 +50,10 @@ When running these commands, optimization progress will be periodically displaye
 Results of the demos are written to the snapshot directory in the "K+\_Demo" and "Na+\_Demo" respectivly.  In each of these subdirectories, you will find iter\_(%d).txt and iter\_(%d).model.  The .txt files contain the model fits at that iteration for each of the protocols.  The .model file provides the model structure and rate parameters that determine the behavior of the model.
 
 Included in MMOptimizer are some MATLAB scripts that can interpret the .model files.
+
+In the plotModel.m script, the first line reads
+`modelFile = '../snapshots/iter_100000.model';`
+Simply set the variable of modelFile to the path of your trained model.  The script will generate plots of the GV curve and channel kinetics.
 
 
 ### Training on Other Data
@@ -203,8 +207,8 @@ sa_param {
   snapshotdir: "snapshots/t2"
 ```
 
-The default value of the solver.prototxt works for a wide range of protocol settings.  However, some important paramters include:
-* vfunc - the type of voltage dependant rate function to use, options are SIGMOID, LINEAR, and POLY
+The default value of the solver.prototxt works for a wide range of protocol settings.  However, some important parameters include:
+* vfunc - the type of voltage dependent rate function to use, options are SIGMOID, LINEAR, and POLY
 * n_prms - the number of voltage function terms
 * node_penality - penalize the model for each node
 * edge_penality - penalize the model for each edge
